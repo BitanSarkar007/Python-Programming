@@ -9,7 +9,6 @@
 # 3. Print the number of non-attacking states.
 
 import numpy as np
-import random
 import time
 
 
