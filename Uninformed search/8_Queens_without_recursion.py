@@ -10,37 +10,37 @@
 # 2. Print the number of solutions to the problem.
 # 3. Print the number of non-attacking states.
 
-all_solutions = []
-treeq = []
+all_solutions = [] # list of all solutions
+treeq = [] # queue for tree search
 
-l = []
+l = [] # initial state
 non_attacking_states = 0
-treeq.append(l)
+treeq.append(l) # add initial state to queue
 
 N =int(input("Enter the number of queens: "))
 
 def is_attacked(state, col):
     row = len(state)
     for r in range(row):
-        if state[r] == col or state[r] - r == col - row or state[r] + r == col + row:
+        if state[r] == col or state[r] - r == col - row or state[r] + r == col + row: # check if queen is attacked
             return True
     return False
 
 
-while (treeq != []):
-    state = treeq.pop(0)
-    if len(state) == N:
-        all_solutions.append(state)
+while (treeq != []): # while queue is not empty
+    state = treeq.pop(0) # pop first element from queue
+    if len(state) == N: # if state is a solution
+        all_solutions.append(state) # add to list of solutions
     else:
         for col in range(N):
-            if not is_attacked(state, col):
-                treeq.append(state + [col])
-                non_attacking_states += 1
+            if not is_attacked(state, col): # if queen is not attacked
+                treeq.append(state + [col]) # add to queue
+                non_attacking_states += 1 # increment non attacking states
 
 
 def print_board(board):
     for row in board:
-        print(''.join('Q' if col == 1 else '.' for col in row))
+        print(''.join('Q' if col == 1 else '.' for col in row)) 
 
 
 def print_solution(solution):
