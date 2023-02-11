@@ -17,7 +17,7 @@ l = [] # initial state
 non_attacking_states = 0
 treeq.append(l) # add initial state to queue
 
-N =int(input("Enter the number of queens: "))
+N = int(input("Enter the number of queens: "))
 
 def is_attacked(state, col):
     row = len(state)
