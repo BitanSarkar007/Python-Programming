@@ -12,12 +12,12 @@
 
 # Implement the graph search algorithm to print a path from the initial state leading to the goal state along with the
 # corresponding action sequence (initial-board – up – next-board – down – next board – ... – right – goal-board)
-
 openList = []
 closedList = []
 i =0
 j = 0
 pos = (i,j)
+path = []
 
 def blank(board):
     for i in range(4):
@@ -34,53 +34,79 @@ def check(pos):
 def top(pos):
     temp_pos = pos[0] + 1 , pos[1]
     if check(temp_pos):
-        return pos[0] + 1 , pos[1]
+        return True
     else:
         return False
 
 def bottom(pos):
     temp_pos = pos[0] - 1 , pos[1]
     if check(temp_pos):
-        return pos[0] - 1 , pos[1]
+        return True
     else:
         return False
 
 def left(pos):
     temp_pos = pos[0] , pos[1] - 1
     if check(temp_pos):
-        return pos[0] , pos[1] - 1
+        return True
     else:
         return False
 
 def right(pos):
     temp_pos = pos[0] , pos[1] + 1
     if check(temp_pos):
-        return pos[0] , pos[1] + 1
+        return True
     else:
         return False
 
-def legal(board):
-    pos = blank(board)
-    row = pos[0]
-    col = pos[1]
-    if top(pos):
-        board[row][col] = board[row-1][col]
-        board[row-1][col] = 0
-        openList.append(board)
-    if bottom(pos):
-        board[row][col] = board[row+1][col]
-        board[row+1][col] = 0
-        openList.append(board)
+def move(board):
     if left(pos):
-        board[row][col] = board[row][col-1]
-        board[row][col-1] = 0
-        openList.append(board)
+        temp_board = board
+        temp_board[pos[0]][pos[1]] = board[pos[0]][pos[1]-1]
+        temp_board[pos[0]][pos[1]-1] = 0
+        openList.append(temp_board)
+        path.append("left")
     if right(pos):
-        board[row][col] = board[row][col+1]
-        board[row][col+1] = 0
-        openList.append(board)
+        temp_board = board
+        temp_board[pos[0]][pos[1]] = board[pos[0]][pos[1]+1]
+        temp_board[pos[0]][pos[1]+1] = 0
+        openList.append(temp_board)
+        path.append("right")
+    if top(pos):
+        temp_board = board
+        temp_board[pos[0]][pos[1]] = board[pos[0]+1][pos[1]]
+        temp_board[pos[0]+1][pos[1]] = 0
+        openList.append(temp_board)
+        path.append("top")
+    if bottom(pos):
+        temp_board = board
+        temp_board[pos[0]][pos[1]] = board[pos[0]-1][pos[1]]
+        temp_board[pos[0]-1][pos[1]] = 0
+        openList.append(temp_board)
+        path.append("bottom")
+        
+def goal(board):
+    if board == [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,0]]:
+        return True
+    else:
+        return False
 
+def graph_search(board):
+    openList.append(board)
+    while openList:
+        board = openList.pop(0)
+        closedList.append(board)
+        pos = blank(board)
+        if goal(board):
+            print("Goal Reached")
+            print(board)
+            print(path)
+            break
+        move(board)
 
+def main():
+    board = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,0,15]]
+    graph_search(board)
 
-
-
+if __name__ == "__main__":
+    main()
