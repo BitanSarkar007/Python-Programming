@@ -6,6 +6,8 @@ functions.
 """
 import copy
 import numpy as np
+from random import randint
+from typing import List
 from utils import *
 
 class Problem:
@@ -125,45 +127,33 @@ class Node:
         # with the same state in a Hash Table
         return hash(self.state)
 
-class nQueens(Problem):
-    def __init__(self, n): # n is the number of queens
-        self.n = n
-        self.initial = np.zeros((n,n), dtype=int)
-        self.goal = np.zeros((n,n), dtype=int)
-        for i in range(n):
-            self.goal[i][i] = 1 # the goal is to have a queen in each row and column
+from itertools import combinations
 
-    def actions(self, state): # return the possible actions
-        actions = []
-        for i in range(self.n):
-            for j in range(self.n): 
-                if state[i][j] == 0:
-                    actions.append((i,j)) # the action is to put a queen in the position (i,j)
-        return actions # return the list of possible actions
+class nQueens(Problem):
+    
+    def __init__(self, n):
+        super().__init__(tuple(range(n)))
+        self.n = n
+
+    def actions(self, state):
+        return [(i, j) for i, j in combinations(range(self.n), 2)]
 
     def result(self, state, action):
-        new_state = copy.deepcopy(state) # create a new state
-        new_state[action[0]][action[1]] = 1 # put a queen in the position (i,j)
-        return new_state 
+        i, j = action
+        state = list(state)
+        state[i], state[j] = state[j], state[i]
+        return tuple(state)
 
     def value(self, state):
-        value = 0
+        return -self.get_num_conflicts(state)
+
+    def get_num_conflicts(self, state):
+        conflicts = 0
         for i in range(self.n):
-            for j in range(self.n):
-                if state[i][j] == 1:
-                    for k in range(self.n):
-                        if k != i and state[k][j] == 1: # if there is a queen in the same row or column
-                            value += 1
-                    for k in range(self.n):
-                        if k != j and state[i][k] == 1: # if there is a queen in the same row or column
-                            value += 1
-                    for k in range(self.n):
-                        if k != i and k != j and state[k][k] == 1: # if there is a queen in the same diagonal
-                            value += 1
-                    for k in range(self.n):
-                        if k != i and k != j and state[k][self.n - k - 1] == 1: # if there is a queen in the same diagonal
-                            value += 1
-        return value # return the number of queens that are in the same row, column or diagonal
+            for j in range(i+1, self.n):
+                if state[i] == state[j] or abs(i-j) == abs(state[i]-state[j]):
+                    conflicts += 1
+        return conflicts
 
 # ______________________________________________________________________________
 
@@ -184,4 +174,12 @@ def hill_climbing(problem):
         current = neighbor
     return current.state
 
-  
+if __name__ == '__main__':
+    problem = nQueens(8)
+    solution = hill_climbing(problem)
+    if solution:
+        solution_pairs = [(i, solution[i]) for i in range(len(solution))]
+        print(solution_pairs)
+        print("Number of conflicts:", problem.get_num_conflicts(solution))
+    else:
+        print("Failed to find a solution.")
