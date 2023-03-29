@@ -19,3 +19,17 @@ Goal Test: Whether the current state matches with the goal configuration.
 4. Input the initial board configuration by entering 4 rows of 4 numbers separated by spaces. For the blank cell, use 0.
 5. Input the goal board configuration by entering 4 rows of 4 numbers separated by spaces. For the blank cell, use 0.
 6. The program will output the sequence of moves that takes the initial board configuration to the goal board configuration.
+
+```
+Enter initial board configuration:
+1 2 3 4
+5 6 7 8
+9 10 0 11
+13 14 15 12
+Enter goal board configuration:
+1 2 3 4
+5 6 7 8
+9 10 11 12
+13 14 15 0
+
+```
