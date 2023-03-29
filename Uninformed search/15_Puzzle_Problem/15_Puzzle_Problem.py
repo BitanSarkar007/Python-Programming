@@ -19,6 +19,7 @@ openList = []
 closedList = []
 pos = None
 parent = {}
+path = []
 
 def blank(board):
     for i in range(4):
@@ -119,7 +120,7 @@ def trace_path(board, current_board):
     if board == current_board:
         return True
     else:
-        print(parent[str(current_board)][1])
+        path.append(parent[str(current_board)][1])
         current_board=parent[str(current_board)][0]
         trace_path(board, current_board)
 def main():
@@ -139,6 +140,9 @@ def main():
 
     graph_search(board, goal_board)
     trace_path(board, goal_board)
+    path.reverse()
+    for i in path:
+        print(i,"->",end=" ")
 
 if __name__ == "__main__":
     main()
