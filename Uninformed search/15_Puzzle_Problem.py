@@ -12,12 +12,14 @@
 
 # Implement the graph search algorithm to print a path from the initial state leading to the goal state along with the
 # corresponding action sequence (initial-board – up – next-board – down – next board – ... – right – goal-board)
+# take user input for initial and goal states
+import copy
+
 openList = []
 closedList = []
-i =0
-j = 0
-pos = (i,j)
+pos = None
 path = []
+parent = {}
 
 def blank(board):
     for i in range(4):
@@ -32,81 +34,112 @@ def check(pos):
         return True
 
 def top(pos):
-    temp_pos = pos[0] + 1 , pos[1]
+    temp_pos = pos[0] - 1, pos[1]
     if check(temp_pos):
         return True
     else:
         return False
 
 def bottom(pos):
-    temp_pos = pos[0] - 1 , pos[1]
+    temp_pos = pos[0] + 1, pos[1]
     if check(temp_pos):
         return True
     else:
         return False
 
 def left(pos):
-    temp_pos = pos[0] , pos[1] - 1
+    temp_pos = pos[0], pos[1] - 1
     if check(temp_pos):
         return True
     else:
         return False
 
 def right(pos):
-    temp_pos = pos[0] , pos[1] + 1
+    temp_pos = pos[0], pos[1] + 1
     if check(temp_pos):
         return True
     else:
         return False
 
-def move(board):
+
+def move(board, path):
     if left(pos):
-        temp_board = board
+        temp_board = copy.deepcopy(board)
         temp_board[pos[0]][pos[1]] = board[pos[0]][pos[1]-1]
         temp_board[pos[0]][pos[1]-1] = 0
-        openList.append(temp_board)
-        path.append("left")
+        if temp_board not in closedList:
+            openList.append(temp_board)
+            parent[str(temp_board)] = [board, "left"]
+            path.append("left")
     if right(pos):
-        temp_board = board
+        temp_board = copy.deepcopy(board)
         temp_board[pos[0]][pos[1]] = board[pos[0]][pos[1]+1]
         temp_board[pos[0]][pos[1]+1] = 0
-        openList.append(temp_board)
-        path.append("right")
+        if temp_board not in closedList:
+            openList.append(temp_board)
+            parent[str(temp_board)] = [board, "right"]
+            path.append("right")
     if top(pos):
-        temp_board = board
-        temp_board[pos[0]][pos[1]] = board[pos[0]+1][pos[1]]
-        temp_board[pos[0]+1][pos[1]] = 0
-        openList.append(temp_board)
-        path.append("top")
-    if bottom(pos):
-        temp_board = board
+        temp_board = copy.deepcopy(board)
         temp_board[pos[0]][pos[1]] = board[pos[0]-1][pos[1]]
         temp_board[pos[0]-1][pos[1]] = 0
-        openList.append(temp_board)
-        path.append("bottom")
-        
-def goal(board):
-    if board == [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,0]]:
+        if temp_board not in closedList:
+            openList.append(temp_board)
+            parent[str(temp_board)] = [board, "top"]
+            path.append("top")
+    if bottom(pos):
+        temp_board = copy.deepcopy(board)
+        temp_board[pos[0]][pos[1]] = board[pos[0]+1][pos[1]]
+        temp_board[pos[0]+1][pos[1]] = 0
+        if temp_board not in closedList:
+            openList.append(temp_board)
+            parent[str(temp_board)] = [board, "bottom"]
+            path.append("bottom")
+            
+def goal(board, goal_board):
+    if board == goal_board:
         return True
     else:
         return False
 
-def graph_search(board):
+def graph_search(board, goal_board):
     openList.append(board)
     while openList:
         board = openList.pop(0)
         closedList.append(board)
+        global pos
         pos = blank(board)
-        if goal(board):
+        if goal(board, goal_board):
             print("Goal Reached")
-            print(board)
-            print(path)
+            # print(board)
+            # print(path)
             break
-        move(board)
-
+        move(board, path)
+def trace_path(board, current_board):
+    # print(current_board) 
+    if board == current_board:
+        return True
+    else:
+        print(parent[str(current_board)][1])
+        current_board=parent[str(current_board)][0]
+        trace_path(board, current_board)
 def main():
-    board = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,0,15]]
-    graph_search(board)
+    print("Enter initial board configuration:")
+    board = []
+    for _ in range(4):
+        row = input().split()
+        row = [int(x) for x in row]
+        board.append(row)
+
+    print("Enter goal board configuration:")
+    goal_board = []
+    for _ in range(4):
+        row = input().split()
+        row = [int(x) for x in row]
+        goal_board.append(row)
+
+    graph_search(board, goal_board)
+    trace_path(board, goal_board)
 
 if __name__ == "__main__":
     main()
