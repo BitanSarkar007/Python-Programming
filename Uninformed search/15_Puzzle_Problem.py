@@ -18,7 +18,6 @@ import copy
 openList = []
 closedList = []
 pos = None
-path = []
 parent = {}
 
 def blank(board):
@@ -62,7 +61,7 @@ def right(pos):
         return False
 
 
-def move(board, path):
+def move(board):
     if left(pos):
         temp_board = copy.deepcopy(board)
         temp_board[pos[0]][pos[1]] = board[pos[0]][pos[1]-1]
@@ -70,7 +69,7 @@ def move(board, path):
         if temp_board not in closedList:
             openList.append(temp_board)
             parent[str(temp_board)] = [board, "left"]
-            path.append("left")
+            # path.append("left")
     if right(pos):
         temp_board = copy.deepcopy(board)
         temp_board[pos[0]][pos[1]] = board[pos[0]][pos[1]+1]
@@ -78,7 +77,7 @@ def move(board, path):
         if temp_board not in closedList:
             openList.append(temp_board)
             parent[str(temp_board)] = [board, "right"]
-            path.append("right")
+            # path.append("right")
     if top(pos):
         temp_board = copy.deepcopy(board)
         temp_board[pos[0]][pos[1]] = board[pos[0]-1][pos[1]]
@@ -86,7 +85,7 @@ def move(board, path):
         if temp_board not in closedList:
             openList.append(temp_board)
             parent[str(temp_board)] = [board, "top"]
-            path.append("top")
+            # path.append("top")
     if bottom(pos):
         temp_board = copy.deepcopy(board)
         temp_board[pos[0]][pos[1]] = board[pos[0]+1][pos[1]]
@@ -94,7 +93,7 @@ def move(board, path):
         if temp_board not in closedList:
             openList.append(temp_board)
             parent[str(temp_board)] = [board, "bottom"]
-            path.append("bottom")
+            # path.append("bottom")
             
 def goal(board, goal_board):
     if board == goal_board:
@@ -114,7 +113,7 @@ def graph_search(board, goal_board):
             # print(board)
             # print(path)
             break
-        move(board, path)
+        move(board)
 def trace_path(board, current_board):
     # print(current_board) 
     if board == current_board:
