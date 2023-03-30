@@ -125,6 +125,25 @@ def trace_path(board, current_board): # trace path from initial to goal
         current_board=parent[str(current_board)][0] # get parent of current board
         trace_path(board, current_board) # recursively call function
 
+def parity(board):
+    temp = []
+    for i in range(4):
+        for j in range(4):
+            temp.append(board[i][j]) # convert board to 1D array
+    inversions = 0
+    for i in range(16):
+        for j in range(i+1,16): # count number of inversions
+            if temp[i]>temp[j]:
+                inversions+=1
+
+    return (1-(inversions%2))
+
+def parity_check(board, goal_board):
+    if parity(board) == parity(goal_board): # check if parity is same for initial and goal board
+        return True
+    else:
+        return False
+    
 def main():
     print("Enter initial board configuration:")
     board = []
@@ -139,12 +158,15 @@ def main():
         row = input().split()
         row = [int(x) for x in row]
         goal_board.append(row)
+    if(parity_check(board, goal_board) == False):
+        print("No solution")
+    else:
 
-    graph_search(board, goal_board) # perform graph search
-    trace_path(board, goal_board) # trace path from initial to goal
-    path.reverse() # reverse path
-    for i in path:
-        print(i,"->",end=" ") # print path
+        graph_search(board, goal_board) # perform graph search
+        trace_path(board, goal_board) # trace path from initial to goal
+        path.reverse() # reverse path
+        for i in path:
+            print(i,"->",end=" ") # print path
 
 if __name__ == "__main__":
     main()
