@@ -15,47 +15,47 @@
 # take user input for initial and goal states
 import copy
 
-openList = []
-closedList = []
-pos = None
-parent = {}
-path = []
+openList = [] # queue for BFS
+closedList = [] # visited nodes
+pos = None # position of blank
+parent = {} # parent of each node
+path = [] # path from initial to goal
 
 def blank(board):
     for i in range(4):
         for j in range(4):
-            if board[i][j] == 0:
+            if board[i][j] == 0: # blank is represented by 0
                 return i , j
 
 def check(pos):
-    if(pos[0] < 0 or pos[0] > 3 or pos [1] < 0 or pos[1] > 3):
+    if(pos[0] < 0 or pos[0] > 3 or pos [1] < 0 or pos[1] > 3): # check if position is valid
         return False
     else:
         return True
 
 def top(pos):
-    temp_pos = pos[0] - 1, pos[1]
+    temp_pos = pos[0] - 1, pos[1] # check if top is valid
     if check(temp_pos):
         return True
     else:
         return False
 
 def bottom(pos):
-    temp_pos = pos[0] + 1, pos[1]
+    temp_pos = pos[0] + 1, pos[1] # check if bottom is valid
     if check(temp_pos):
         return True
     else:
         return False
 
 def left(pos):
-    temp_pos = pos[0], pos[1] - 1
+    temp_pos = pos[0], pos[1] - 1 # check if left is valid
     if check(temp_pos):
         return True
     else:
         return False
 
 def right(pos):
-    temp_pos = pos[0], pos[1] + 1
+    temp_pos = pos[0], pos[1] + 1 # check if right is valid
     if check(temp_pos):
         return True
     else:
@@ -66,30 +66,30 @@ def move(board):
     if left(pos):
         temp_board = copy.deepcopy(board)
         temp_board[pos[0]][pos[1]] = board[pos[0]][pos[1]-1]
-        temp_board[pos[0]][pos[1]-1] = 0
+        temp_board[pos[0]][pos[1]-1] = 0 # swap blank with left
         if temp_board not in closedList:
-            openList.append(temp_board)
-            parent[str(temp_board)] = [board, "left"]
+            openList.append(temp_board) # add to queue if not visited
+            parent[str(temp_board)] = [board, "left"] # store parent of each node
             # path.append("left")
     if right(pos):
-        temp_board = copy.deepcopy(board)
-        temp_board[pos[0]][pos[1]] = board[pos[0]][pos[1]+1]
-        temp_board[pos[0]][pos[1]+1] = 0
+        temp_board = copy.deepcopy(board) 
+        temp_board[pos[0]][pos[1]] = board[pos[0]][pos[1]+1] # swap blank with right
+        temp_board[pos[0]][pos[1]+1] = 0 
         if temp_board not in closedList:
-            openList.append(temp_board)
-            parent[str(temp_board)] = [board, "right"]
+            openList.append(temp_board) 
+            parent[str(temp_board)] = [board, "right"] 
             # path.append("right")
     if top(pos):
         temp_board = copy.deepcopy(board)
-        temp_board[pos[0]][pos[1]] = board[pos[0]-1][pos[1]]
+        temp_board[pos[0]][pos[1]] = board[pos[0]-1][pos[1]] # swap blank with top
         temp_board[pos[0]-1][pos[1]] = 0
         if temp_board not in closedList:
             openList.append(temp_board)
-            parent[str(temp_board)] = [board, "top"]
+            parent[str(temp_board)] = [board, "top"] 
             # path.append("top")
     if bottom(pos):
         temp_board = copy.deepcopy(board)
-        temp_board[pos[0]][pos[1]] = board[pos[0]+1][pos[1]]
+        temp_board[pos[0]][pos[1]] = board[pos[0]+1][pos[1]] # swap blank with bottom
         temp_board[pos[0]+1][pos[1]] = 0
         if temp_board not in closedList:
             openList.append(temp_board)
@@ -103,33 +103,35 @@ def goal(board, goal_board):
         return False
 
 def graph_search(board, goal_board):
-    openList.append(board)
+    openList.append(board) # add initial board to queue
     while openList:
-        board = openList.pop(0)
-        closedList.append(board)
-        global pos
-        pos = blank(board)
+        board = openList.pop(0) # pop first element from queue
+        closedList.append(board) # add to visited nodes
+        global pos 
+        pos = blank(board) # get position of blank
         if goal(board, goal_board):
             print("Goal Reached")
             # print(board)
             # print(path)
             break
-        move(board)
-def trace_path(board, current_board):
+        move(board) # move blank in all directions
+
+def trace_path(board, current_board): # trace path from initial to goal
     # print(current_board) 
-    if board == current_board:
+    if board == current_board: # if initial board is reached
         return True
     else:
-        path.append(parent[str(current_board)][1])
-        current_board=parent[str(current_board)][0]
-        trace_path(board, current_board)
+        path.append(parent[str(current_board)][1]) # append action to path
+        current_board=parent[str(current_board)][0] # get parent of current board
+        trace_path(board, current_board) # recursively call function
+
 def main():
     print("Enter initial board configuration:")
     board = []
     for _ in range(4):
-        row = input().split()
-        row = [int(x) for x in row]
-        board.append(row)
+        row = input().split() 
+        row = [int(x) for x in row] # convert string to int
+        board.append(row) # add row to board
 
     print("Enter goal board configuration:")
     goal_board = []
@@ -138,11 +140,11 @@ def main():
         row = [int(x) for x in row]
         goal_board.append(row)
 
-    graph_search(board, goal_board)
-    trace_path(board, goal_board)
-    path.reverse()
+    graph_search(board, goal_board) # perform graph search
+    trace_path(board, goal_board) # trace path from initial to goal
+    path.reverse() # reverse path
     for i in path:
-        print(i,"->",end=" ")
+        print(i,"->",end=" ") # print path
 
 if __name__ == "__main__":
     main()
