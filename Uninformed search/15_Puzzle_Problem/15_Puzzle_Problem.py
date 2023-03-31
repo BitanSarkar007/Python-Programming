@@ -14,159 +14,109 @@
 # corresponding action sequence (initial-board – up – next-board – down – next board – ... – right – goal-board)
 # take user input for initial and goal states
 import copy
+from collections import deque
 
-openList = [] # queue for BFS
-closedList = [] # visited nodes
-pos = None # position of blank
-parent = {} # parent of each node
-path = [] # path from initial to goal
-
-def blank(board):
+# Find the position of the blank tile (the tile with a value of 0)
+def find_blank(board):
     for i in range(4):
         for j in range(4):
-            if board[i][j] == 0: # blank is represented by 0
-                return i , j
+            if board[i][j] == 0:
+                return i, j
+    # If the blank tile is not found, return None
+    return None
 
-def check(pos):
-    if(pos[0] < 0 or pos[0] > 3 or pos [1] < 0 or pos[1] > 3): # check if position is valid
-        return False
-    else:
-        return True
+# Check if a given position is within the bounds of the 4x4 grid
+def check_position(pos):
+    return 0 <= pos[0] <= 3 and 0 <= pos[1] <= 3
 
-def top(pos):
-    temp_pos = pos[0] - 1, pos[1] # check if top is valid
-    if check(temp_pos):
-        return True
-    else:
-        return False
-
-def bottom(pos):
-    temp_pos = pos[0] + 1, pos[1] # check if bottom is valid
-    if check(temp_pos):
-        return True
-    else:
-        return False
-
-def left(pos):
-    temp_pos = pos[0], pos[1] - 1 # check if left is valid
-    if check(temp_pos):
-        return True
-    else:
-        return False
-
-def right(pos):
-    temp_pos = pos[0], pos[1] + 1 # check if right is valid
-    if check(temp_pos):
-        return True
-    else:
-        return False
-
-
-def move(board):
-    if left(pos):
-        temp_board = copy.deepcopy(board)
-        temp_board[pos[0]][pos[1]] = board[pos[0]][pos[1]-1]
-        temp_board[pos[0]][pos[1]-1] = 0 # swap blank with left
-        if temp_board not in closedList:
-            openList.append(temp_board) # add to queue if not visited
-            parent[str(temp_board)] = [board, "left"] # store parent of each node
-            # path.append("left")
-    if right(pos):
-        temp_board = copy.deepcopy(board) 
-        temp_board[pos[0]][pos[1]] = board[pos[0]][pos[1]+1] # swap blank with right
-        temp_board[pos[0]][pos[1]+1] = 0 
-        if temp_board not in closedList:
-            openList.append(temp_board) 
-            parent[str(temp_board)] = [board, "right"] 
-            # path.append("right")
-    if top(pos):
-        temp_board = copy.deepcopy(board)
-        temp_board[pos[0]][pos[1]] = board[pos[0]-1][pos[1]] # swap blank with top
-        temp_board[pos[0]-1][pos[1]] = 0
-        if temp_board not in closedList:
-            openList.append(temp_board)
-            parent[str(temp_board)] = [board, "top"] 
-            # path.append("top")
-    if bottom(pos):
-        temp_board = copy.deepcopy(board)
-        temp_board[pos[0]][pos[1]] = board[pos[0]+1][pos[1]] # swap blank with bottom
-        temp_board[pos[0]+1][pos[1]] = 0
-        if temp_board not in closedList:
-            openList.append(temp_board)
-            parent[str(temp_board)] = [board, "bottom"]
-            # path.append("bottom")
-            
-def goal(board, goal_board):
-    if board == goal_board:
-        return True
-    else:
-        return False
-
-def graph_search(board, goal_board):
-    openList.append(board) # add initial board to queue
-    while openList:
-        board = openList.pop(0) # pop first element from queue
-        closedList.append(board) # add to visited nodes
-        global pos 
-        pos = blank(board) # get position of blank
-        if goal(board, goal_board):
-            print("Goal Reached")
-            # print(board)
-            # print(path)
-            break
-        move(board) # move blank in all directions
-
-def trace_path(board, current_board): # trace path from initial to goal
-    # print(current_board) 
-    if board == current_board: # if initial board is reached
-        return True
-    else:
-        path.append(parent[str(current_board)][1]) # append action to path
-        current_board=parent[str(current_board)][0] # get parent of current board
-        trace_path(board, current_board) # recursively call function
-
-def parity(board):
-    temp = []
+# Calculate the Manhattan distance between two 4x4 grids
+def calculate_distance(board, goal_board):
+    distance = 0
     for i in range(4):
         for j in range(4):
-            temp.append(board[i][j]) # convert board to 1D array
-    inversions = 0
-    for i in range(16):
-        for j in range(i+1,16): # count number of inversions
-            if temp[i]>temp[j]:
-                inversions+=1
+            if board[i][j] != 0:
+                goal_pos = [(index // 4, index % 4) for index, value in enumerate(sum(goal_board, [])) if value == board[i][j]][0]
+                distance += abs(goal_pos[0] - i) + abs(goal_pos[1] - j)
+    return distance
 
-    return (1-(inversions%2))
+# Get the possible moves from a given position
+def get_moves(pos):
+    moves = []
+    directions = [("right", (0, 1)), ("left", (0, -1)), ("bottom", (1, 0)), ("top", (-1, 0))]
 
-def parity_check(board, goal_board):
-    if parity(board) == parity(goal_board): # check if parity is same for initial and goal board
-        return True
-    else:
-        return False
-    
+    for move, direction in directions:
+        new_pos = pos[0] + direction[0], pos[1] + direction[1]
+        if check_position(new_pos):
+            moves.append((move, new_pos))
+
+    return moves
+
+# Move the blank tile to a new position
+def move_blank(board, pos, new_pos):
+    new_board = copy.deepcopy(board)
+    new_board[pos[0]][pos[1]] = new_board[new_pos[0]][new_pos[1]]
+    new_board[new_pos[0]][new_pos[1]] = 0
+    return new_board
+
+# Check if the current board matches the goal board
+def goal_reached(board, goal_board):
+    return board == goal_board
+
+# Perform BFS on the puzzle using a modified algorithm
+def bfs_modified(board, goal_board):
+    open_list = deque([(board, 0)])  # Store the heuristic distance along with the board
+    visited = set()
+    parent = {}
+    path = []
+
+    while open_list:
+        current_board, distance = open_list.popleft()
+        visited.add(str(current_board))
+
+        if goal_reached(current_board, goal_board):
+            while current_board != board:
+                current_board, move = parent[str(current_board)]
+                path.append(move)
+            return list(reversed(path))
+
+        pos = find_blank(current_board)
+        for move, new_pos in get_moves(pos):
+            new_board = move_blank(current_board, pos, new_pos)
+            if str(new_board) not in visited:
+                new_distance = calculate_distance(new_board, goal_board)
+                open_list.append((new_board, new_distance))
+                open_list = deque(sorted(open_list, key=lambda x: x[1]))  # Sort based on heuristic distance
+                visited.add(str(new_board))
+                parent[str(new_board)] = (current_board, move)
+
+    # If there is no solution, return None
+    return None
+
+# Main function
 def main():
-    print("Enter initial board configuration:")
+    # Prompt the user to enter the initial and goal board configurations
+    print("Enter the initial board configuration (use 0 for the blank tile):")
     board = []
-    for _ in range(4):
-        row = input().split() 
-        row = [int(x) for x in row] # convert string to int
-        board.append(row) # add row to board
-
-    print("Enter goal board configuration:")
-    goal_board = []
-    for _ in range(4):
+    for i in range(4):
         row = input().split()
-        row = [int(x) for x in row]
-        goal_board.append(row)
-    if(parity_check(board, goal_board) == False):
+        board.append([int(x) for x in row])
+
+    print("Enter the goal board configuration (use 0 for the blank tile):")
+    goal_board = []
+    for i in range(4):
+        row = input().split()
+        goal_board.append([int(x) for x in row])
+
+    # Solve the puzzle using BFS
+    path = bfs_modified(board, goal_board)
+    if path is None:
         print("No solution")
     else:
-
-        graph_search(board, goal_board) # perform graph search
-        trace_path(board, goal_board) # trace path from initial to goal
-        path.reverse() # reverse path
-        for i in path:
-            print(i,"->",end=" ") # print path
+        # Print the solution
+        print("Solution:")
+        for step, move in enumerate(path, start=1):
+            print(f"Step {step}: {move}")
+        print(f"Number of steps: {len(path)}")
 
 if __name__ == "__main__":
     main()
