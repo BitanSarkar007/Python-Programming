@@ -151,19 +151,22 @@ class KnowledgeBasedAgent:
     not_unsafe_set=self.not_unsafe()
     unvisited=self.unvisited()
     location=(0,0)
+    flag = 1
     if len(safe_set)!=0:
         print('safe location')
         for element in safe_set:
             if element in unvisited:
                 location=element
+                flag = 0
                 break
-    elif len(not_unsafe_set)!=0:
+    elif len(not_unsafe_set)!=0 and flag == 1:
         print('not unsafe location')
         for ele in not_unsafe_set:
             if ele in unvisited:
                 location=ele
+                flag = 0
                 break
-    else:
+    elif flag == 1:
         print('No move left')
         raise GameOver(RESULT_GIVE_UP)
     return location

@@ -47,10 +47,10 @@ class WumpusWorldAgent(inference.KnowledgeBasedAgent):
       for i in range(1,self.size+1):
           for j in range(1,self.size+1):
               if(inference.resolution(self.KB, logic.expr(f'L{i}_{j}'))):
-                 safe_set.add((i,j));
+                 safe_set.add((i,j))
               
               if(inference.resolution(self.KB, logic.expr(f'~P{i}_{j}')) and inference.resolution(self.KB, logic.expr(f'~W{i}_{j}'))):
-                  safe_set.add((i,j));
+                  safe_set.add((i,j))
 
               if(inference.resolution(self.KB, logic.expr(f'~S{i}_{j}')) and inference.resolution(self.KB, logic.expr(f'~B{i}_{j}'))):
                   for x in get_neighbors(i,j,self.size):
