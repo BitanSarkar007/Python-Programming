@@ -5,7 +5,6 @@ then create problem instances and solve them with calls to the various search
 functions.
 """
 import copy
-import numpy as np
 from random import randint
 from typing import List
 from utils import *
