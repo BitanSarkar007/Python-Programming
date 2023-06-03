@@ -16,7 +16,7 @@ Goal Test: Whether the current arrangement of queens is a valid solution where n
 2. Navigate to the directory where the files are located.
 3. The program can be run using the following command:
 ```
-python3 nqueens.py
+python3 search.py
 ```
 4. The program will prompt the user to enter the number of queens to be placed on the chessboard.
 
