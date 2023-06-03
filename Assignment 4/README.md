@@ -20,5 +20,13 @@ python3 search.py
 ```
 4. The program will prompt the user to enter the number of queens to be placed on the chessboard.
 
-The program will then print the initial state, the goal state, and the solution state. The program will also print the number of steps taken to reach the solution state.
+The program will then print the solution pairs and number of conflicts.
+
+# Example Output
+
+```
+Enter the number of queens: 8
+[(0, 0), (1, 2), (2, 6), (3, 3), (4, 7), (5, 4), (6, 1), (7, 5)]
+Number of conflicts: 1
+```
 
