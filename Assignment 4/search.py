@@ -174,7 +174,9 @@ def hill_climbing(problem):
     return current.state
 
 if __name__ == '__main__':
-    problem = nQueens(8)
+    # Enter number of queens
+    n = int(input("Enter number of queens: "))
+    problem = nQueens(n)
     solution = hill_climbing(problem)
     if solution:
         solution_pairs = [(i, solution[i]) for i in range(len(solution))]
