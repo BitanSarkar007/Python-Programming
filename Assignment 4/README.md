@@ -12,11 +12,13 @@ Goal Test: Whether the current arrangement of queens is a valid solution where n
 
 # How to Run the Program
 
-The program can be run using the following command:
-
+1. Clone the repository or download the zip file.
+2. Navigate to the directory where the files are located.
+3. The program can be run using the following command:
 ```
 python3 nqueens.py
 ```
+4. The program will prompt the user to enter the number of queens to be placed on the chessboard.
 
-The program will prompt the user to enter the number of queens to be placed on the chessboard. The program will then print the initial state, the goal state, and the solution state. The program will also print the number of steps taken to reach the solution state.
+The program will then print the initial state, the goal state, and the solution state. The program will also print the number of steps taken to reach the solution state.
 
